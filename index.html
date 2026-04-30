@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aviator Pro | Maaj Edition</title>
+    <style>
+        :root { --red: #ff003c; --bg: #000; --green: #00e676; --blue: #00f2ff; --gold: #ffcc00; --panel: #1a1a1a; }
+        * { box-sizing: border-box; font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: #000; color: white; overflow: hidden; height: 100vh; }
+        
+        /* Initial Screen */
+        #audio-unlocker { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .start-btn { background: var(--red); color: white; border: none; padding: 20px 50px; font-size: 22px; font-weight: 900; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px var(--red); }
+
+        .app { width: 100%; max-width: 500px; height: 100vh; margin: auto; display: flex; flex-direction: column; position: relative; padding: 10px; background: radial-gradient(circle at center, #111 0%, #000 100%); }
+        
+        /* Header & Balance */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--panel); border-radius: 12px; margin-bottom: 8px; border: 1px solid #333; }
+        .logo { color: var(--red); font-weight: 900; font-style: italic; font-size: 20px; text-shadow: 0 0 10px var(--red); }
+        .bal-box { background: #000; padding: 6px 15px; border-radius: 20px; border: 1px solid var(--green); color: var(--green); font-weight: bold; font-size: 16px; }
+
+        /* Menu Navigation */
+        .menu-bar { display: flex; justify-content: space-around; background: #111; padding: 12px 5px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #222; }
+        .menu-item { text-align: center; font-size: 10px; font-weight: bold; cursor: pointer; color: #fff; flex: 1; }
+        .menu-item span { display: block; font-size: 20px; margin-bottom: 4px; }
+
+        /* Predictor Tool (Wapas Aagaya) */
+        #hacker-tool { position: absolute; top: 180px; left: 20px; width: 120px; background: rgba(0,0,0,0.9); border: 2px solid var(--blue); border-radius: 15px; z-index: 1000; padding: 10px; text-align: center; box-shadow: 0 0 15px var(--blue); display: none; }
+        .pred-val { font-size: 26px; font-weight: 900; color: var(--blue); margin: 5px 0; }
+
+        /* Game Stage */
+        .stage { flex: 1; position: relative; background: #080808; border-radius: 20px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #1a1a1a; margin-bottom: 120px; }
+        #multi-display { font-size: 70px; font-weight: 900; z-index: 10; transition: transform 0.1s; }
+        #plane { position: absolute; font-size: 45px; z-index: 5; display: none; filter: drop-shadow(0 0 10px var(--red)); }
+
+        /* Bet Panels (BIGGER & HIGHER) */
+        .bet-area { position: absolute; bottom: 15px; width: calc(100% - 20px); display: flex; gap: 12px; z-index: 2000; }
+        .bet-card { flex: 1; background: var(--panel); padding: 15px; border-radius: 18px; border: 2px solid #333; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        .bet-input { background: #000; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 10px; text-align: center; font-size: 18px; font-weight: bold; width: 100%; }
+        .main-btn { width: 100%; padding: 18px; border-radius: 12px; border: none; font-size: 20px; font-weight: 900; color: white; cursor: pointer; text-transform: uppercase; }
+        .btn-bet { background: var(--green); box-shadow: 0 5px 0 #008f4a; }
+        .btn-cash { background: #ff9800; display: none; box-shadow: 0 5px 0 #b36b00; }
+
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #111; width: 100%; max-width: 380px; padding: 30px; border-radius: 25px; border: 1px solid #333; text-align: center; }
+        .modal-input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; border-radius: 12px; color: #fff; margin: 12px 0; text-align: center; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div id="audio-unlocker">
+    <h1 style="color:var(--red); font-style:italic; margin-bottom:30px;">AVIATOR PRO MAAJ</h1>
+    <button class="start-btn" onclick="startApp()">START APP</button>
+</div>
+
+<div class="app">
+    <div id="hacker-tool">
+        <div style="font-size:10px; color:var(--blue);">NEXT CRASH</div>
+        <div id="pred-next" class="pred-val">1.00x</div>
+        <button onclick="toggleTool()" style="background:#333; color:#fff; border:none; padding:4px 10px; border-radius:5px; font-size:10px;">HIDE</button>
+    </div>
+
+    <div class="header">
+        <div class="logo" onclick="toggleTool()">MAAJ EDITION</div>
+        <div class="bal-box">₹<span id="wallet-bal">0.00</span></div>
+    </div>
+
+    <div class="menu-bar">
+        <div class="menu-item" onclick="showModal('dep-modal')"><span>📥</span>DEPOSIT</div>
+        <div class="menu-item" onclick="showModal('with-modal')"><span>📤</span>WITHDRAW</div>
+        <div class="menu-item" onclick="showModal('ref-modal')"><span>🎁</span>REFERRAL</div>
+    </div>
+
+    <div class="stage">
+        <div id="multi-display">1.00x</div>
+        <div id="plane">✈️</div>
+        <div id="crash-text" style="position:absolute; color:var(--red); font-size:30px; font-weight:900; display:none;">FLEW AWAY!</div>
+    </div>
+
+    <div class="bet-area">
+        <div class="bet-card">
+            <input type="number" id="amt1" class="bet-input" value="100">
+            <button id="bet1" class="main-btn btn-bet" onclick="placeBet(1)">BET</button>
+            <button id="cash1" class="main-btn btn-cash" onclick="cashOut(1)">CASH OUT<br><span id="w1" style="font-size:12px;">0.00</span></button>
+        </div>
+        <div class="bet-card">
+            <input type="number" id="amt2" class="bet-input" value="100">
+            <button id="bet2" class="main-btn btn-bet" onclick="placeBet(2)">BET</button>
+            <button id="cash2" class="main-btn btn-cash" onclick="cashOut(2)">CASH OUT<br><span id="w2" style="font-size:12px;">0.00</span></button>
+        </div>
+    </div>
+
+    <div id="dep-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--green);">DEPOSIT</h2>
+            <p style="color:#888; font-size:12px;">Copy UPI and pay, then enter UTR</p>
+            <div style="background:#000; padding:15px; border-radius:15px; margin:15px 0; border:1px dashed var(--blue);">
+                <span id="upi-id" style="color:var(--blue); font-weight:bold; font-size:18px;">8430005800@axl</span>
+            </div>
+            <input type="number" id="d-amt" class="modal-input" placeholder="Amount (₹)">
+            <input type="text" id="d-utr" class="modal-input" placeholder="12 Digit UTR Number">
+            <button class="main-btn" style="background:var(--green)" onclick="submitReq('Deposit')">SUBMIT DEPOSIT</button>
+            <p onclick="closeModals()" style="margin-top:20px; color:#555; cursor:pointer;">CLOSE</p>
+        </div>
+    </div>
+
+    <div id="with-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--red);">WITHDRAW</h2>
+            <input type="number" class="modal-input" placeholder="Amount to Withdraw">
+            <input type="text" class="modal-input" placeholder="Your UPI ID">
+            <button class="main-btn" style="background:var(--red)" onclick="submitReq('Withdrawal')">WITHDRAW NOW</button>
+            <p onclick="closeModals()" style="margin-top:20px; color:#555; cursor:pointer;">CLOSE</p>
+        </div>
+    </div>
+
+    <div id="ref-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:var(--gold);">MAAJ REFERRAL</h2>
+            <p style="color:#888;">Share link and earn ₹50 per friend</p>
+            <div class="modal-input" style="color:var(--gold); border-color:var(--gold);">MAAJ-REFER-OFFICIAL</div>
+            <button class="main-btn" style="background:var(--gold); color:#000;" onclick="alert('Link Copied!')">COPY LINK</button>
+            <p onclick="closeModals()" style="margin-top:20px; color:#555; cursor:pointer;">CLOSE</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let bal = localStorage.getItem('maaj_bal') ? parseFloat(localStorage.getItem('maaj_bal')) : 500.00;
+    let isFlying = false, currentMulti = 1.00, nextCrash = 2.00;
+    let b1 = { active: false, amt: 0 }, b2 = { active: false, amt: 0 };
+
+    function startApp() {
+        document.getElementById('audio-unlocker').style.display = 'none';
+        updateBal();
+        runGame();
+    }
+
+    function toggleTool() {
+        let t = document.getElementById('hacker-tool');
+        t.style.display = (t.style.display === 'none' || t.style.display === '') ? 'block' : 'none';
+    }
+
+    function runGame() {
+        setInterval(() => {
+            if(!isFlying) {
+                isFlying = true;
+                currentMulti = 1.00;
+                nextCrash = (Math.random() < 0.7 ? (Math.random()*1.5 + 1.1) : (Math.random()*4 + 2)).toFixed(2);
+                document.getElementById('pred-next').innerText = nextCrash + "x";
+                document.getElementById('plane').style.display = "block";
+                document.getElementById('crash-text').style.display = "none";
+                document.getElementById('multi-display').style.display = "block";
+            } else {
+                currentMulti += 0.01 * (currentMulti/1.5);
+                document.getElementById('multi-display').innerText = currentMulti.toFixed(2) + "x";
+                
+                if(b1.active) document.getElementById('w1').innerText = (b1.amt * currentMulti).toFixed(2);
+                if(b2.active) document.getElementById('w2').innerText = (b2.amt * currentMulti).toFixed(2);
+
+                if(currentMulti >= nextCrash) {
+                    isFlying = false;
+                    document.getElementById('plane').style.display = "none";
+                    document.getElementById('multi-display').style.display = "none";
+                    document.getElementById('crash-text').style.display = "block";
+                    b1.active = b2.active = false;
+                    setTimeout(updateBal, 3000);
+                }
+            }
+        }, 100);
+    }
+
+    function placeBet(id) {
+        let amt = parseFloat(document.getElementById('amt'+id).value);
+        if(bal >= amt && !isFlying) {
+            bal -= amt;
+            if(id === 1) { b1.active = true; b1.amt = amt; } 
+            else { b2.active = true; b2.amt = amt; }
+            document.getElementById('bet'+id).style.display = "none";
+            document.getElementById('cash'+id).style.display = "block";
+            updateBal();
+        } else { alert("Wait for next round or check balance!"); }
+    }
+
+    function cashOut(id) {
+        if(isFlying) {
+            let win = (id === 1 ? b1.amt : b2.amt) * currentMulti;
+            bal += win;
+            if(id === 1) b1.active = false; else b2.active = false;
+            document.getElementById('cash'+id).style.display = "none";
+            document.getElementById('bet'+id).style.display = "block";
+            updateBal();
+        }
+    }
+
+    function updateBal() {
+        document.getElementById('wallet-bal').innerText = bal.toFixed(2);
+        localStorage.setItem('maaj_bal', bal.toFixed(2));
+        if(!isFlying) {
+            document.querySelectorAll('.btn-bet').forEach(b => b.style.display = "block");
+            document.querySelectorAll('.btn-cash').forEach(b => b.style.display = "none");
+        }
+    }
+
+    function showModal(id) { document.getElementById(id).style.display = "flex"; }
+    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
+    function submitReq(t) { alert(t + " request sent to Maaj Admin!"); closeModals(); }
+</script>
+</body>
+</html>
